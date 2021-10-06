@@ -1,11 +1,19 @@
 package com.example.changingbluetoothname
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import androidx.core.app.ActivityCompat.requestPermissions
+
+import android.content.pm.PackageManager
+
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +32,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        bleBtn.setOnClickListener {
+            val intent = Intent(this@MainActivity,BLEAdvertisementActivity::class.java)
+            startActivity(intent)
+        }
 
     }
 
@@ -46,4 +58,5 @@ class MainActivity : AppCompatActivity() {
         }
         return true
     }
+
 }
