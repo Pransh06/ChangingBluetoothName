@@ -12,9 +12,6 @@ import androidx.core.app.ActivityCompat.requestPermissions
 
 import android.content.pm.PackageManager
 
-
-
-
 class MainActivity : AppCompatActivity() {
 
     val bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
@@ -22,6 +19,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
         Log.e("MainActivity", "localdevicename Before : "+bluetoothAdapter.getName()+" localdeviceAddress : "+bluetoothAdapter.getAddress());
 
@@ -33,8 +31,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         bleBtn.setOnClickListener {
-            val intent = Intent(this@MainActivity,BLEAdvertisementActivity::class.java)
-            startActivity(intent)
+                val intent = Intent(this@MainActivity,BLEAdvertisementActivity::class.java)
+                startActivity(intent)
+        }
+
+        discoveringBleAd.setOnClickListener {
+                val intent = Intent(this@MainActivity,DiscoveringBLEAdvertisementActivity::class.java)
+                startActivity(intent)
         }
 
     }

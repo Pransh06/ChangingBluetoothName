@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="app/src/main/res/layout/activity_ble_advertisement.xml" value="0.14479166666666668" />
+        <entry key="app/src/main/res/layout/activity_discovering_bleadvertisement.xml" value="0.221569547813616" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2582444737667305" />
       </map>
     </option>

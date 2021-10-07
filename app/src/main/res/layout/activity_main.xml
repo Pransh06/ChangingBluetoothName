@@ -37,4 +37,13 @@
        app:layout_constraintStart_toStartOf="parent"
        app:layout_constraintEnd_toEndOf="parent"/>
 
+   <Button
+      android:id="@+id/discoveringBleAd"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:text="Discovering BLE Advertisement"
+       app:layout_constraintBottom_toTopOf="@+id/bleBtn"
+       app:layout_constraintStart_toStartOf="parent"
+       app:layout_constraintEnd_toEndOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
