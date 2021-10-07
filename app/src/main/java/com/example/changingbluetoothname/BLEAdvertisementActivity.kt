@@ -12,6 +12,7 @@ import android.os.ParcelUuid
 import com.example.changingbluetoothname.Constants.SERVICE_UUID
 import android.bluetooth.le.AdvertiseCallback
 import android.util.Log
+import java.nio.charset.Charset
 
 
 class BLEAdvertisementActivity : AppCompatActivity() {
@@ -40,10 +41,15 @@ class BLEAdvertisementActivity : AppCompatActivity() {
             .build()
 
         val parcelUuid = ParcelUuid(SERVICE_UUID)
+        val messageToSend: ByteArray = "D".toByteArray()
+        "D".toByteArray().forEach {
+            Log.e(TAG, "each byte: $it")
+        }
 
         val data = AdvertiseData.Builder()
             .setIncludeDeviceName(true)
-            .addServiceUuid(parcelUuid)
+            //.addServiceUuid(parcelUuid)
+            .addServiceData(parcelUuid,messageToSend)
             .build()
 
         val advertisingCallback: AdvertiseCallback = object : AdvertiseCallback() {
@@ -53,12 +59,28 @@ class BLEAdvertisementActivity : AppCompatActivity() {
             }
 
             override fun onStartFailure(errorCode: Int) {
-                Log.e("BLE", "Advertising onStartFailure: $errorCode")
                 super.onStartFailure(errorCode)
+                var description = ""
+                if (errorCode == ADVERTISE_FAILED_FEATURE_UNSUPPORTED) {
+                    description = "ADVERTISE_FAILED_FEATURE_UNSUPPORTED";
+                } else if (errorCode == ADVERTISE_FAILED_TOO_MANY_ADVERTISERS) {
+                    description = "ADVERTISE_FAILED_TOO_MANY_ADVERTISERS";
+                } else if (errorCode == ADVERTISE_FAILED_ALREADY_STARTED) {
+                    description = "ADVERTISE_FAILED_ALREADY_STARTED";
+                } else if (errorCode == ADVERTISE_FAILED_DATA_TOO_LARGE) {
+                    description = "ADVERTISE_FAILED_DATA_TOO_LARGE";
+                } else if (errorCode == ADVERTISE_FAILED_INTERNAL_ERROR) {
+                    description = "ADVERTISE_FAILED_INTERNAL_ERROR";
+                } else {
+                    description = "unknown";
+                }
+                Log.e(TAG, "Advertising onStartFailure: $errorCode and $description")
+
             }
         }
         bluetoothLeAdvertiser.startAdvertising(settings, data, advertisingCallback)
     }
+
 
     companion object {
         const val TAG = "BLEAdvertisementActivi"
