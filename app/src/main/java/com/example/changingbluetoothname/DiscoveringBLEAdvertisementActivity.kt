@@ -23,6 +23,7 @@ class DiscoveringBLEAdvertisementActivity : AppCompatActivity() {
 
     private val handler: Handler = Handler()    //mHandler controls a small timer that stops discovery after a set period of time.
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_discovering_bleadvertisement)
@@ -34,34 +35,35 @@ class DiscoveringBLEAdvertisementActivity : AppCompatActivity() {
 
         val filters =  ArrayList<ScanFilter>()
         filters.add(filter)
+        Log.e(TAG, "filtersListSize $filters")
 
         //You also need to create a ScanSettings object, which works similarly to the AdvertiseSettings
         val settings = ScanSettings.Builder()
-            .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+            .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
             .build()
 
         //Once you have your filters, settings, and callbacks in place, you can begin discovering Bluetooth LE advertisements.
         bluetoothLeScanner.startScan(filters, settings, scanCallback)
+        Log.e(TAG, "ble scanner started.. $bluetoothLeScanner")
 
         handler.postDelayed(Runnable {
             bluetoothLeScanner.stopScan(scanCallback) }, 10000)
     }
 
-    val scanCallback: ScanCallback = object : ScanCallback() {
-
+    private val scanCallback: ScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
-            super.onScanResult(callbackType, result)
-            Log.e(TAG, "onScanResult: $result", )
-            if (result?.getDevice() == null || TextUtils.isEmpty(result.getDevice().getName()))
-                return
             Toast.makeText(this@DiscoveringBLEAdvertisementActivity,"$result", Toast.LENGTH_SHORT).show()
+
+            Log.e(TAG, "onScanResult: $result")
+            if (result?.device == null || TextUtils.isEmpty(result.device.getName()))
+                return
 
             val builder: StringBuilder = StringBuilder(result.getDevice().getName())
             builder.append("\n").append(result.getScanRecord()?.getServiceData(result.getScanRecord()?.getServiceUuids()?.get(0))?.let {
                 String(it, Charset.forName("UTF-8"))
             })
 
-            textViewAdvertisement.setText(builder.toString())
+            textViewAdvertisement.text = builder.toString()
         }
 
         override fun onBatchScanResults(results: List<ScanResult?>?) {
