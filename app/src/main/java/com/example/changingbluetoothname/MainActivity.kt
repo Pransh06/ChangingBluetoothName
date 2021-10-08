@@ -23,21 +23,25 @@ class MainActivity : AppCompatActivity() {
 
         Log.e("MainActivity", "localdevicename Before : "+bluetoothAdapter.getName()+" localdeviceAddress : "+bluetoothAdapter.getAddress());
 
-        submitBtn.setOnClickListener {
+       /* submitBtn.setOnClickListener {
             if (checkInput() && bluetoothAdapter!=null){
                 bluetoothAdapter.setName(enterName1.text.toString())
                 Log.e("MainActivity", "localdevicename After : "+bluetoothAdapter.getName()+" localdeviceAddress : "+bluetoothAdapter.getAddress());
             }
-        }
+        }*/
 
         bleBtn.setOnClickListener {
-                val intent = Intent(this@MainActivity,BLEAdvertisementActivity::class.java)
-                startActivity(intent)
+                if (bluetoothAdapter.isEnabled){
+                    val intent = Intent(this@MainActivity,BLEAdvertisementActivity::class.java)
+                    startActivity(intent)
+                }
         }
 
         discoveringBleAd.setOnClickListener {
+            if (bluetoothAdapter!=null && bluetoothAdapter.isEnabled){
                 val intent = Intent(this@MainActivity,DiscoveringBLEAdvertisementActivity::class.java)
                 startActivity(intent)
+            }
         }
 
     }

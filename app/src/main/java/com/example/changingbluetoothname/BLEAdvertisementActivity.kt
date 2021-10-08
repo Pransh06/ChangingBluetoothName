@@ -11,6 +11,14 @@ import android.os.ParcelUuid
 import com.example.changingbluetoothname.Constants.SERVICE_UUID
 import android.util.Log
 import java.nio.charset.Charset
+import android.bluetooth.le.AdvertisingSetParameters
+import android.os.Build
+import android.bluetooth.le.AdvertiseData
+import android.bluetooth.le.AdvertisingSet
+
+import android.bluetooth.le.AdvertisingSetCallback
+import androidx.annotation.RequiresApi
+import java.lang.Exception
 
 
 class BLEAdvertisementActivity : AppCompatActivity() {
@@ -19,27 +27,47 @@ class BLEAdvertisementActivity : AppCompatActivity() {
 
     val bluetoothLeAdvertiser = bluetoothAdapter.bluetoothLeAdvertiser
 
+    var currentAdvertisingSet: AdvertisingSet? = null
+
+    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_ble_advertisement)
 
         if( !bluetoothAdapter.isMultipleAdvertisementSupported) {
-            Toast.makeText( this, "Multiple advertisement not supported", Toast.LENGTH_SHORT ).show();
+            Toast.makeText( this, "Multiple advertisement not supported", Toast.LENGTH_SHORT ).show()
+            return
+        }
+        var b:Boolean =  bluetoothAdapter.setName("VOGO")
+        if (b){
+            Toast.makeText(this,"bluetooth name changed!",Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "localdevicename After : "+bluetoothAdapter.getName()+" localdeviceAddress : "+bluetoothAdapter.getAddress());
+
         }
 
 
-        // Some advertising settings. We don't set an advertising timeout
-       // since our device is always connected to AC power
-        val settings = AdvertiseSettings.Builder()
-            .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
-            .setConnectable(true)
-            .setTimeout(0)
-            .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
-            .build()
+        val settings = AdvertisingSetParameters.Builder()
+                .setLegacyMode(true) // True by default, but set here as a reminder.
+                .setConnectable(false)
+                .setInterval(AdvertisingSetParameters.INTERVAL_MIN)
+                .setTxPowerLevel(AdvertisingSetParameters.TX_POWER_MAX)
+                .build()
+
+            /*// Some advertising settings. We don't set an advertising timeout
+            // since our device is always connected to AC power
+             AdvertiseSettings.Builder()
+                .setAdvertiseMode(AdvertiseSettings.ADVERTISE_MODE_BALANCED)
+                .setConnectable(true)
+                .setTimeout(0)
+                .setTxPowerLevel(AdvertiseSettings.ADVERTISE_TX_POWER_LOW)
+                .build()*/
+
+
 
         val parcelUuid = ParcelUuid(SERVICE_UUID)
-        val messageToSend: ByteArray = "Data".toByteArray()
-        "Data".toByteArray().forEach {
+        val messageToSend: ByteArray = "Vogo".toByteArray()
+        "Vogo".toByteArray().forEach {
             Log.e(TAG, "each byte: $it")
         }
 
@@ -48,7 +76,11 @@ class BLEAdvertisementActivity : AppCompatActivity() {
             .addServiceData(parcelUuid,messageToSend)
             .build()
 
-        val advertisingCallback: AdvertiseCallback = object : AdvertiseCallback() {
+        /*val data = AdvertiseData.Builder()
+            .setIncludeDeviceName(false)
+            .build()
+*/
+       /* val advertisingCallback: AdvertiseCallback = object : AdvertiseCallback() {
             override fun onStartSuccess(settingsInEffect: AdvertiseSettings) {
                 Log.e(TAG, "LE Advertise Started.")
                 super.onStartSuccess(settingsInEffect)
@@ -76,8 +108,40 @@ class BLEAdvertisementActivity : AppCompatActivity() {
                 Log.e(TAG, "Advertising onStartFailure: $errorCode and $description")
 
             }
+        }*/
+
+        try {
+            bluetoothLeAdvertiser.startAdvertisingSet(settings,data,null,null,null,callback)
+        }catch (e:IllegalArgumentException){
+            Log.e(TAG, "exception $e: " )
         }
-        bluetoothLeAdvertiser.startAdvertising(settings, data, advertisingCallback)
+        catch (e:Exception){
+            Log.e(TAG, "exception $e: " )
+        }
+
+        // When done with the advertising:
+        //bluetoothLeAdvertiser.stopAdvertisingSet(callback);
+    }
+
+    val callback: AdvertisingSetCallback = @RequiresApi(Build.VERSION_CODES.O)
+    object : AdvertisingSetCallback() {
+        override fun onAdvertisingSetStarted(advertisingSet: AdvertisingSet, txPower: Int,
+                                             status: Int){
+            Log.e(TAG, "onAdvertisingSetStarted(): txPower:" + txPower + " , status: " + status)
+            currentAdvertisingSet = advertisingSet
+        }
+
+        override fun onAdvertisingDataSet(advertisingSet: AdvertisingSet, status: Int) {
+            Log.e(TAG, "onAdvertisingDataSet() :status:$status  $advertisingSet")
+        }
+
+        override fun onScanResponseDataSet(advertisingSet: AdvertisingSet, status: Int) {
+            Log.e(TAG, "onScanResponseDataSet(): status:$status")
+        }
+
+        override fun onAdvertisingSetStopped(advertisingSet: AdvertisingSet) {
+            Log.e(TAG, "onAdvertisingSetStopped():")
+        }
     }
     companion object {
         const val TAG = "BLEAdvertisementActivi"
