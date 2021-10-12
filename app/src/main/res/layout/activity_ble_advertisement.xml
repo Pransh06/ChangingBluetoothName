@@ -6,4 +6,25 @@
     android:layout_height="match_parent"
     tools:context=".BLEAdvertisementActivity">
 
+    <EditText
+        android:id="@+id/enterName1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Enter new name of the Bluetooth!"
+        android:gravity="center"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <Button
+        android:id="@+id/submitBtn"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="Submit"
+        android:layout_marginTop="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/enterName1"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
